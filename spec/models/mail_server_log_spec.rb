@@ -84,7 +84,7 @@ describe MailServerLog do
 
         it "recognises a single incoming email" do
             MailServerLog.email_addresses_on_line("a random log line foi+request-14-e0e09f97@example.com has an email").should ==
-                ["foi+request-14-e0e09f97@example.com"]            
+                ["foi+request-14-e0e09f97@example.com"]
         end
 
         it "recognises two email addresses on the same line" do
@@ -97,11 +97,25 @@ describe MailServerLog do
         end
 
         it "ignores an email with a different prefix" do
-            MailServerLog.email_addresses_on_line("foitest+request-14-e0e09f97@example.com").should be_empty            
+            MailServerLog.email_addresses_on_line("foitest+request-14-e0e09f97@example.com").should be_empty
         end
 
         it "ignores an email where the . is substituted for something else" do
             MailServerLog.email_addresses_on_line("foi+request-14-e0e09f97@exampledcom").should be_empty
+        end
+    end
+
+    context "Exim" do
+        describe ".load_exim_log_data" do
+            it "sanitizes each line in the log file" do
+                # Log files can contain stuff which isn't valid UTF-8
+                # sometimes when things go wrong.
+                fixture_path = File.expand_path(File.dirname(__FILE__) + '/../fixtures/files/exim-bad-utf8-exim-log')
+                log = File.open(fixture_path, 'r')
+                done = MailServerLogDone.new(:filename => "foo")
+                # This will error if we don't sanitize the lines
+                MailServerLog.load_exim_log_data(log, done)
+            end
         end
     end
 
@@ -158,7 +172,7 @@ describe MailServerLog do
         end
 
         describe ".extract_postfix_queue_id_from_syslog_line" do
-            it "returns nil if there is no queue id" do                
+            it "returns nil if there is no queue id" do
                 MailServerLog.extract_postfix_queue_id_from_syslog_line("Oct  7 07:16:48 kedumba postfix/smtp[14294]: connect to mail.neilcopp.com.au[110.142.151.66]:25: Connection refused").should be_nil
             end
         end
