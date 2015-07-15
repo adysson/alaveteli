@@ -621,7 +621,7 @@ THEME_URLS:
     <a name="incoming_email_spam_threshold"><code>INCOMING_EMAIL_SPAM_THRESHOLD</code></a>
   </dt>
   <dd>
-    <p>Filter any incoming email that looks like spam to the holding pen.</p>
+    <p>Discard incoming mail that looks like spam.</p>
 
     <p>
       If you filter incoming emails through a spam detector like SpamAssassin,
