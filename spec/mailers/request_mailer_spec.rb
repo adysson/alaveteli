@@ -156,6 +156,7 @@ describe RequestMailer, " when receiving incoming mail" do
 
   it "discards mail over the configured spam threshold" do
     info_request = FactoryGirl.create(:info_request)
+    AlaveteliConfiguration.stub(:incoming_email_spam_action).and_return('discard')
     AlaveteliConfiguration.stub(:incoming_email_spam_header).and_return('X-Spam-Score')
     AlaveteliConfiguration.stub(:incoming_email_spam_threshold).and_return(10)
     spam_email = <<-EOF.strip_heredoc
@@ -175,6 +176,7 @@ describe RequestMailer, " when receiving incoming mail" do
 
   it "delivers mail under the configured spam threshold" do
     info_request = FactoryGirl.create(:info_request)
+    AlaveteliConfiguration.stub(:incoming_email_spam_action).and_return('discard')
     AlaveteliConfiguration.stub(:incoming_email_spam_header).and_return('X-Spam-Score')
     AlaveteliConfiguration.stub(:incoming_email_spam_threshold).and_return(1000)
     spam_email = <<-EOF.strip_heredoc

@@ -221,14 +221,18 @@ class RequestMailer < ApplicationMailer
       return
     end
 
+    spam_action = AlaveteliConfiguration.incoming_email_spam_action
     spam_threshold = AlaveteliConfiguration.incoming_email_spam_threshold
     spam_header = AlaveteliConfiguration.incoming_email_spam_header
     spam_score = email.header[spam_header].try(:value).to_f
 
-    if spam_header && spam_threshold && spam_score
+    if spam_action && spam_header && spam_threshold && spam_score
       if spam_score > spam_threshold
-        # Do nothing. Silently drop spam above the threshold
-        return
+        case spam_action
+        when 'discard'
+          # Do nothing. Silently drop spam above the threshold
+          return
+        end
       end
     end
 
