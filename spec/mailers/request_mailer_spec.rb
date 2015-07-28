@@ -212,6 +212,25 @@ describe RequestMailer, " when receiving incoming mail" do
     ActionMailer::Base.deliveries.clear
   end
 
+  it "delivers mail without a spam header" do
+    info_request = FactoryGirl.create(:info_request)
+    AlaveteliConfiguration.stub(:incoming_email_spam_action).and_return('discard')
+    AlaveteliConfiguration.stub(:incoming_email_spam_header).and_return('X-Spam-Score')
+    AlaveteliConfiguration.stub(:incoming_email_spam_threshold).and_return(1000)
+    spam_email = <<-EOF.strip_heredoc
+    From: EMAIL_FROM
+    To: FOI Person <EMAIL_TO>
+    Subject: BUY MY SPAM
+
+    Plz buy my spam
+    EOF
+
+    receive_incoming_mail(spam_email, info_request.incoming_email, 'spammer@example.com')
+
+    expect(ActionMailer::Base.deliveries).to have(1).item
+    ActionMailer::Base.deliveries.clear
+  end
+
   it "should return incoming mail to sender if not authority when a request is stopped for non-authority spam" do
     # mark request as anti-spam
     ir = info_requests(:fancy_dog_request)
