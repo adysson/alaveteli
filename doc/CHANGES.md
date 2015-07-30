@@ -1,5 +1,12 @@
 # develop
 
+## Highlighted Features
+
+* The sorting on PublicBodyController#list now uses `COLLATE` to sort in the
+  correct order for a locale if a collation is available for the language. See
+  http://alaveteli.org/docs/developers/i18n/#internationalised-sorting for
+  adding collations. This requires PostgreSQL >= 9.1.12. (Gareth Rees)
+
 # Version 0.22.1.0
 
 ## Highlighted Features
